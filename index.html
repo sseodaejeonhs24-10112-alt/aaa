@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ㄾㅎㅎㄴ - 생필품 관리 & 실구매가 비교</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+        body { font-family: 'Pretendard', sans-serif; }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800 antialiased min-h-screen flex flex-col">
+
+    <!-- Header -->
+    <header class="bg-indigo-600 text-white shadow-md sticky top-0 z-50">
+        <div class="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <i class="fa-solid fa-boxes-packing text-2xl"></i>
+                <h1 class="text-xl font-bold tracking-tight">ㄾㅎㅎㄴ <span class="text-xs font-normal bg-indigo-500 px-2 py-0.5 rounded-full">생필품 비서</span></h1>
+            </div>
+            <span class="text-xs text-indigo-200">1인 가구 맞춤 관리</span>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-5xl mx-auto px-4 py-6 flex-1 w-full grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+        <!-- Left Column: Add Product & Quick Calculator -->
+        <div class="space-y-6">
+
+            <!-- Form: Add Item -->
+            <section class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
+                <h2 class="text-base font-bold text-slate-900 mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-circle-plus text-indigo-600"></i> 생필품 등록하기
+                </h2>
+                <form id="itemForm" class="space-y-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">품목명</label>
+                        <input type="text" id="itemName" placeholder="예: 샴푸, 롤휴지" required class="w-full px-3 py-2 text-sm border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">총 용량/수량</label>
+                            <input type="number" id="itemCapacity" placeholder="1000" required class="w-full px-3 py-2 text-sm border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">단위</label>
+                            <select id="itemUnit" class="w-full px-3 py-2 text-sm border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+                                <option value="ml">ml</option>
+                                <option value="g">g</option>
+                                <option value="개">개</option>
+                                <option value="롤">롤</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">구매일</label>
+                            <input type="date" id="itemDate" required class="w-full px-3 py-2 text-sm border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">하루 사용량</label>
+                            <input type="number" id="itemDailyUse" placeholder="15" required class="w-full px-3 py-2 text-sm border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+                        </div>
+                    </div>
+                    <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 rounded-lg transition text-sm shadow-sm mt-2">
+                        소진 예측 등록
+                    </button>
+                </form>
+            </section>
+
+            <!-- Calculator: Unit Price & Compare -->
+            <section class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
+                <h2 class="text-base font-bold text-slate-900 mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-calculator text-indigo-600"></i> 실구매가 즉시 비교
+                </h2>
+                <div class="space-y-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">판매가 (원)</label>
+                        <input type="number" id="calcPrice" placeholder="15000" class="w-full px-3 py-2 text-sm border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">총 용량</label>
+                            <input type="number" id="calcAmount" placeholder="500" class="w-full px-3 py-2 text-sm border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">수량(개수)</label>
+                            <input type="number" id="calcCount" value="1" class="w-full px-3 py-2 text-sm border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">쿠폰 할인 (원)</label>
+                            <input type="number" id="calcDiscount" value="0" class="w-full px-3 py-2 text-sm border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">배송비 (원)</label>
+                            <input type="number" id="calcShipping" value="0" class="w-full px-3 py-2 text-sm border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
+                        </div>
+                    </div>
+
+                    <div class="p-3 bg-slate-50 border rounded-lg text-sm mt-3 space-y-1">
+                        <div class="flex justify-between text-xs text-slate-500">
+                            <span>최종 결제 금액:</span>
+                            <span id="resTotal" class="font-bold text-slate-800">0 원</span>
+                        </div>
+                        <div class="flex justify-between font-bold text-indigo-600 text-sm">
+                            <span>단위당 실가격:</span>
+                            <span id="resUnit">0 원 / 100단위</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Right Column: Dashboard & Alerts -->
+        <div class="lg:col-span-2 space-y-6">
+
+            <!-- Summary & Bundle Tip -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div class="bg-gradient-to-r from-indigo-500 to-indigo-600 text-white p-4 rounded-2xl shadow-sm">
+                    <div class="text-xs text-indigo-100 font-medium">재구매 필요 임박 품목</div>
+                    <div id="urgentCount" class="text-2xl font-black mt-1">0 개</div>
+                    <p class="text-xs text-indigo-200 mt-2">소진 5일 전 알림이 활성화됩니다.</p>
+                </div>
+
+                <div class="bg-emerald-50 border border-emerald-200 p-4 rounded-2xl shadow-sm text-emerald-900">
+                    <div class="flex items-center gap-1.5 font-bold text-xs text-emerald-700">
+                        <i class="fa-solid fa-truck-fast"></i> 묶음 배송 팁
+                    </div>
+                    <p id="bundleTip" class="text-xs mt-1 text-emerald-800 leading-relaxed">
+                        등록된 품목이 없습니다. 생필품을 등록해 맞춤 묶음 배송 추천을 받으세요!
+                    </p>
+                </div>
+            </div>
+
+            <!-- List: Managed Items -->
+            <section class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                        <i class="fa-solid fa-list-check text-indigo-600"></i> 보유 생필품 및 소진 예정일
+                    </h2>
+                    <span id="totalItems" class="text-xs bg-slate-100 text-slate-600 px-2 py-1 rounded-full">총 0개</span>
+                </div>
+
+                <div id="itemList" class="space-y-3">
+                    <div class="text-center py-10 text-slate-400 text-xs">
+                        등록된 생필품이 없습니다. 왼쪽 양식에서 추가해 보세요!
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <script>
+        let items = JSON.parse(localStorage.getItem('my_items')) || [
+            { id: 1, name: "샴푸", capacity: 1000, unit: "ml", date: "2026-10-15", dailyUse: 20 },
+            { id: 2, name: "롤휴지", capacity: 30, unit: "롤", date: "2026-10-01", dailyUse: 1 }
+        ];
+
+        // Save & Render Items
+        function saveItems() {
+            localStorage.setItem('my_items', JSON.stringify(items));
+            renderItems();
+        }
+
+        function calculateDday(dateStr, capacity, dailyUse) {
+            const startDate = new Date(dateStr);
+            const totalDays = Math.floor(capacity / dailyUse);
+            const endDate = new Date(startDate);
+            endDate.setDate(startDate.getDate() + totalDays);
+
+            const today = new Date();
+            const diffTime = endDate - today;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+            return { endDate: endDate.toISOString().split('T')[0], diffDays };
+        }
+
+        function renderItems() {
+            const listEl = document.getElementById('itemList');
+            const urgentCountEl = document.getElementById('urgentCount');
+            const totalItemsEl = document.getElementById('totalItems');
+            const bundleTipEl = document.getElementById('bundleTip');
+
+            listEl.innerHTML = '';
+            totalItemsEl.textContent = `총 ${items.length}개`;
+
+            if (items.length === 0) {
+                listEl.innerHTML = `<div class="text-center py-10 text-slate-400 text-xs">등록된 생필품이 없습니다.</div>`;
+                urgentCountEl.textContent = '0 개';
+                bundleTipEl.textContent = '등록된 품목이 없습니다.';
+                return;
+            }
+
+            let urgentCount = 0;
+            let urgentNames = [];
+
+            items.forEach(item => {
+                const { endDate, diffDays } = calculateDday(item.date, item.capacity, item.dailyUse);
+                
+                if (diffDays <= 5) {
+                    urgentCount++;
+                    urgentNames.push(item.name);
+                }
+
+                const dDayBadge = diffDays <= 0 
+                    ? `<span class="bg-rose-100 text-rose-700 font-bold px-2.5 py-1 rounded-full text-xs">소진됨 (D+${Math.abs(diffDays)})</span>`
+                    : diffDays <= 5 
+                    ? `<span class="bg-amber-100 text-amber-700 font-bold px-2.5 py-1 rounded-full text-xs">재구매 임박 (D-${diffDays})</span>`
+                    : `<span class="bg-indigo-50 text-indigo-700 font-semibold px-2.5 py-1 rounded-full text-xs">D-${diffDays}</span>`;
+
+                const div = document.createElement('div');
+                div.className = 'p-4 border border-slate-100 bg-slate-50/50 rounded-xl flex items-center justify-between hover:bg-slate-50 transition';
+                div.innerHTML = `
+                    <div class="space-y-1">
+                        <div class="flex items-center gap-2">
+                            <span class="font-bold text-slate-800 text-sm">${item.name}</span>
+                            <span class="text-xs text-slate-400">(${item.capacity}${item.unit})</span>
+                        </div>
+                        <div class="text-xs text-slate-500">
+                            구매: ${item.date} | 일일 ${item.dailyUse}${item.unit} 사용 | 예상 소진일: ${endDate}
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        ${dDayBadge}
+                        <button onclick="deleteItem(${item.id})" class="text-slate-400 hover:text-rose-500 text-xs">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </div>
+                `;
+                listEl.appendChild(div);
+            });
+
+            urgentCountEl.textContent = `${urgentCount} 개`;
+
+            if (urgentNames.length > 0) {
+                bundleTipEl.innerHTML = `현재 <strong>[${urgentNames.join(', ')}]</strong>의 소진 시점이 다가옵니다! 묶음 배송으로 무료배송 기준을 채워보세요.`;
+            } else {
+                bundleTipEl.textContent = '모든 생필품의 수량이 충분합니다.';
+            }
+        }
+
+        function deleteItem(id) {
+            items = items.filter(item => item.id !== id);
+            saveItems();
+        }
+
+        // Form Submit Event
+        document.getElementById('itemForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const newItem = {
+                id: Date.now(),
+                name: document.getElementById('itemName').value,
+                capacity: parseFloat(document.getElementById('itemCapacity').value),
+                unit: document.getElementById('itemUnit').value,
+                date: document.getElementById('itemDate').value,
+                dailyUse: parseFloat(document.getElementById('itemDailyUse').value)
+            };
+            items.push(newItem);
+            saveItems();
+            e.target.reset();
+            document.getElementById('itemDate').valueAsDate = new Date();
+        });
+
+        // Dynamic Calculation Event
+        const calcInputs = ['calcPrice', 'calcAmount', 'calcCount', 'calcDiscount', 'calcShipping'];
+        calcInputs.forEach(id => document.getElementById(id).addEventListener('input', calculatePrice));
+
+        function calculatePrice() {
+            const price = parseFloat(document.getElementById('calcPrice').value) || 0;
+            const amount = parseFloat(document.getElementById('calcAmount').value) || 0;
+            const count = parseFloat(document.getElementById('calcCount').value) || 1;
+            const discount = parseFloat(document.getElementById('calcDiscount').value) || 0;
+            const shipping = parseFloat(document.getElementById('calcShipping').value) || 0;
+
+            const total = Math.max(0, price - discount) + shipping;
+            const totalAmount = amount * count;
+
+            document.getElementById('resTotal').textContent = `${total.toLocaleString()} 원`;
+
+            if (totalAmount > 0) {
+                const unitPrice = Math.round((total / totalAmount) * 100);
+                document.getElementById('resUnit').textContent = `${unitPrice.toLocaleString()} 원 / 100 단위`;
+            } else {
+                document.getElementById('resUnit').textContent = `0 원 / 100 단위`;
+            }
+        }
+
+        // Initialize Default Date
+        document.getElementById('itemDate').valueAsDate = new Date();
+        renderItems();
+    </script>
+</body>
+</html>
